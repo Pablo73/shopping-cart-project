@@ -73,3 +73,12 @@ const createCartItemElement = ({ id, title, price }) => {
 };
 
 window.onload = () => { };
+
+const productList = async () => {
+  const value = await fetchProducts('computador');
+  const { results } = value;
+  const captureItems = document.querySelector('.items');
+  results.forEach((element) => captureItems.appendChild(createProductItemElement(element)));
+};
+
+productList();
