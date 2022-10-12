@@ -27,5 +27,4 @@ it('Testa se o retorno da função fetchItem com o argumento do item "MLB1615760
     const response = await fetchItem();
     expect(response).toEqual(new Error('You must provide an url'));
   })
-  // fail('Teste vazio');
 });

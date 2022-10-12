@@ -64,6 +64,13 @@ const getIdFromProductItem = (product) => product.querySelector('span.id').inner
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
+
+ const cartItemClickListener = (event) => {
+  const captureItems = document.querySelector('.items');
+  const baz = event;
+  baz.target.remove(captureItems);
+};
+
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -82,3 +89,26 @@ const productList = async () => {
 };
 
 productList();
+
+const productToCart = async (product) => {
+  const value = await fetchItem(product);
+  const captureCartItems = document.querySelector('.cart__items');
+  captureCartItems.appendChild(createCartItemElement(value));
+};
+
+const selectItem = () => { 
+  const cart = document.querySelector('.items'); 
+  cart.addEventListener('click', (event) => {
+    productToCart(event.target.parentNode.firstChild.innerHTML);
+    });
+  };
+selectItem(); 
+
+  const buttonemptyCart = document.querySelector('.empty-cart'); 
+  const list = document.querySelector('.cart__items');
+
+  buttonemptyCart.addEventListener('click', () => {
+    while (list.firstChild) {
+      list.removeChild(list.firstChild);
+    }
+  });
