@@ -8,6 +8,7 @@
  * @param {string} imageSource - URL da imagem.
  * @returns {Element} Elemento de imagem do produto.
  */
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -54,7 +55,7 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @param {Element} product - Elemento do produto.
  * @returns {string} ID do produto.
  */
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
+// const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 
 /**
  * Função responsável por criar e retornar um item do carrinho.
@@ -67,8 +68,19 @@ const getIdFromProductItem = (product) => product.querySelector('span.id').inner
 
  const cartItemClickListener = (event) => {
   const captureItems = document.querySelector('.items');
-  const baz = event;
-  baz.target.remove(captureItems);
+  event.target.remove(captureItems);
+
+  if (localStorage.cartItems !== undefined) {
+    const pop = JSON.parse(getSavedCartItems());
+    localStorage.clear();
+    pop.forEach((element, index) => {
+      if (event.target.innerHTML.slice(4, 17) === element.id) {
+      pop.splice(index, 1);
+      }
+    }); 
+    localStorage.setItem('cartItems', JSON.stringify(pop));
+  }
+  pop.length = 0;
 };
 
 const createCartItemElement = ({ id, title, price }) => {
@@ -79,7 +91,11 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
-window.onload = () => { };
+pop = [];
+const saveCartItemsLocal = (element) => {
+  pop.push(element);
+  localStorage.setItem('cartItems', JSON.stringify(pop));
+};
 
 const productList = async () => {
   const value = await fetchProducts('computador');
@@ -88,12 +104,13 @@ const productList = async () => {
   results.forEach((element) => captureItems.appendChild(createProductItemElement(element)));
 };
 
-productList();
+const linter = '.cart__items';
 
 const productToCart = async (product) => {
   const value = await fetchItem(product);
-  const captureCartItems = document.querySelector('.cart__items');
+  const captureCartItems = document.querySelector(linter);
   captureCartItems.appendChild(createCartItemElement(value));
+  saveCartItemsLocal(value);
 };
 
 const selectItem = () => { 
@@ -102,13 +119,29 @@ const selectItem = () => {
     productToCart(event.target.parentNode.firstChild.innerHTML);
     });
   };
-selectItem(); 
 
-  const buttonemptyCart = document.querySelector('.empty-cart'); 
-  const list = document.querySelector('.cart__items');
+const buttonEmptyCart = document.querySelector('.empty-cart'); 
+const list = document.querySelector(linter);
 
-  buttonemptyCart.addEventListener('click', () => {
-    while (list.firstChild) {
-      list.removeChild(list.firstChild);
-    }
+buttonEmptyCart.addEventListener('click', () => {
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
+  localStorage.clear();
+});
+
+const datolocalStorage = () => {
+  if (localStorage.cartItems !== undefined) {
+    const pop = JSON.parse(getSavedCartItems());
+  pop.forEach((element) => {
+    const captureCartItems = document.querySelector(linter);
+    captureCartItems.appendChild(createCartItemElement(element));
   });
+  }
+};
+
+window.onload = () => {
+  datolocalStorage();
+  productList();
+  selectItem(); 
+ };
