@@ -66,16 +66,28 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @returns {Element} Elemento de um item do carrinho.
  */
 
+ let total = 0;
+const totalPrice = (sum, subtraction) => {
+  const getSub = document.querySelector('.total-price');
+  if (sum === 0) {
+    total -= subtraction.price;
+  }
+  if (subtraction === 0) {
+    total += sum.price; 
+  }
+  getSub.innerHTML = `Subtotal: ${Math.round(total * 100) / 100}`;
+};
+
  const cartItemClickListener = (event) => {
   const captureItems = document.querySelector('.items');
   event.target.remove(captureItems);
-
-  if (localStorage.cartItems !== undefined) {
-    const pop = JSON.parse(getSavedCartItems());
-    localStorage.clear();
+if (localStorage.cartItems !== undefined) {
+  const pop = JSON.parse(getSavedCartItems());
+  localStorage.clear();
     pop.forEach((element, index) => {
       if (event.target.innerHTML.slice(4, 17) === element.id) {
       pop.splice(index, 1);
+      totalPrice(0, element);
       }
     }); 
     localStorage.setItem('cartItems', JSON.stringify(pop));
@@ -111,6 +123,7 @@ const productToCart = async (product) => {
   const captureCartItems = document.querySelector(linter);
   captureCartItems.appendChild(createCartItemElement(value));
   saveCartItemsLocal(value);
+  totalPrice(value, 0);
 };
 
 const selectItem = () => { 
@@ -133,15 +146,15 @@ buttonEmptyCart.addEventListener('click', () => {
 const datolocalStorage = () => {
   if (localStorage.cartItems !== undefined) {
     const pop = JSON.parse(getSavedCartItems());
-  pop.forEach((element) => {
-    const captureCartItems = document.querySelector(linter);
-    captureCartItems.appendChild(createCartItemElement(element));
-  });
+    pop.forEach((element) => {
+      const captureCartItems = document.querySelector(linter);
+      captureCartItems.appendChild(createCartItemElement(element));
+    });
   }
 };
 
 window.onload = () => {
   datolocalStorage();
   productList();
-  selectItem(); 
+  selectItem();
  };
