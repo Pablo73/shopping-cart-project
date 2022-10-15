@@ -32,6 +32,7 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-around;
   background-color: rgb(10, 118, 79);
   width: 40%;
   height: 100%;

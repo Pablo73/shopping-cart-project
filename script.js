@@ -66,6 +66,19 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @returns {Element} Elemento de um item do carrinho.
  */
 
+const printLoading = (element) => {
+  const getMeuCarrinho = document.querySelector('.cart__title');
+  const h3 = document.createElement('h3');
+  h3.className = 'loading';
+  h3.innerHTML = element;
+  getMeuCarrinho.appendChild(h3); 
+};
+
+const deletLoading = () => {
+  const getLoading = document.querySelector('.loading');
+getLoading.remove('h3');
+};
+  
  let total = 0;
 const totalPrice = (sum, subtraction) => {
   const getSub = document.querySelector('.total-price');
@@ -110,16 +123,20 @@ const saveCartItemsLocal = (element) => {
 };
 
 const productList = async () => {
-  const value = await fetchProducts('computador');
-  const { results } = value;
+  printLoading('carregando...');
   const captureItems = document.querySelector('.items');
+  const value = await fetchProducts('computador');
+  deletLoading();
+  const { results } = value;
   results.forEach((element) => captureItems.appendChild(createProductItemElement(element)));
 };
 
 const linter = '.cart__items';
 
 const productToCart = async (product) => {
+  printLoading('carregando...');
   const value = await fetchItem(product);
+  deletLoading();
   const captureCartItems = document.querySelector(linter);
   captureCartItems.appendChild(createCartItemElement(value));
   saveCartItemsLocal(value);
